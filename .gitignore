@@ -1,0 +1,7 @@
+.DS_Store
+
+dist
+resources
+node_modules
+src/configs/app-config.ts
+src/constants/dhis2-analytic-constant.ts
