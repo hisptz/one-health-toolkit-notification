@@ -12,9 +12,7 @@ async function startAppProcess() {
       'App'
     );
     const appProcess = new AppProcess();
-    //TODO start the process
-    console.log('validation trigger process');
-    console.log('emial notificatio  count');
+    await appProcess.startProcess();
     await new LogsUtil().addLogs(
       'info',
       `End of One Health Toolkit's notification script`,

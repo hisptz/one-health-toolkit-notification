@@ -1,12 +1,16 @@
 import { appSourceConfig } from '../configs';
-import { Dhis2DataValueUtil, Dhis2ValidationUtil, LogsUtil } from '../utils';
+import {
+  Dhis2DataValueUtil,
+  Dhis2ValidationRuleUtil,
+  LogsUtil
+} from '../utils';
 
 export class ValidationRuleProcess {
   private _dhis2DataValueUtil: Dhis2DataValueUtil;
-  private _dhis2ValidationUtil: Dhis2ValidationUtil;
+  private _dhis2ValidationRuleUtil: Dhis2ValidationRuleUtil;
 
   constructor() {
-    this._dhis2ValidationUtil = new Dhis2ValidationUtil(
+    this._dhis2ValidationRuleUtil = new Dhis2ValidationRuleUtil(
       appSourceConfig.username,
       appSourceConfig.password,
       appSourceConfig.baseUrl
@@ -25,7 +29,10 @@ export class ValidationRuleProcess {
         `Start of validation rule trigger process`,
         'App process'
       );
-      //TODO handle logics
+      console.log('here');
+      // run predictors
+      /// get ou for validations
+      //for each ou trigger and count notifications
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',

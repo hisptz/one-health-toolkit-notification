@@ -11,7 +11,7 @@ export class AppProcess {
   async startProcess() {
     try {
       await this._validationRuleProcess.startValidationRuleNotificationTriggerProcess();
-      //TODO handling for notification counts
+      //TODO handling for notification counts from email sent
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
