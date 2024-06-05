@@ -1,6 +1,6 @@
 import { AppUtil } from '.';
 
-export class Dhis2ValidationUtil {
+export class Dhis2ValidationRuleUtil {
   private _url: string;
   private _headers: { 'Content-Type': string; Authorization: string };
 
