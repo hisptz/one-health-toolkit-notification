@@ -13,12 +13,17 @@ export class Dhis2ValidationRuleUtil {
   }
 
   async triggerAndGetValidationRuleNotification(
-    orgUnit: string
+    orgUnit: string,
+    startDate: string,
+    endDate: string
   ): Promise<Dhis2ValidationRuleTriggerResponse[]> {
     let validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[] = [];
     try {
-      const payloads: any = this._getValidationRuleNotificationPayload(orgUnit);
-      console.log(payloads);
+      const payloads: any = this._getValidationRuleNotificationPayload(
+        orgUnit,
+        startDate,
+        endDate
+      );
       for (const payload of payloads) {
         const response: any = await HttpUtil.postHttp(
           this._headers,
@@ -45,17 +50,12 @@ export class Dhis2ValidationRuleUtil {
     return flattenDeep(validationRuleTriggers);
   }
 
-  private _getValidationRuleNotificationPayload(orgUnit: string): any[] {
+  private _getValidationRuleNotificationPayload(
+    orgUnit: string,
+    startDate: string,
+    endDate: string
+  ): any[] {
     const payloads: any[] = [];
-    const endDate = AppUtil.getFormattedDate(new Date());
-    const startDate = AppUtil.getFormattedDate(
-      new Date(
-        new Date().setMonth(
-          new Date().getMonth() -
-            DHIS2_VALIDATION_RULE_CONSTANT.defaultNumberOfMonth
-        )
-      )
-    );
     let defaultPayload: any = {
       startDate,
       endDate,

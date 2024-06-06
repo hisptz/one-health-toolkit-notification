@@ -26,14 +26,16 @@ export class ValidationRuleProcess {
     );
   }
 
-  async startValidationRuleNotificationTriggerProcess() {
+  async startValidationRuleNotificationTriggerProcess(
+    startDate: string,
+    endDate: string
+  ) {
     try {
       await new LogsUtil().addLogs(
         'info',
-        `Start of evaluation and trigger for validation rule process`,
+        `Start of evaluation and trigger for validation rule process from ${startDate} to ${endDate}`,
         'Validation Rule Process'
       );
-      //TODO run predictors
       const organisationUnits: Dhis2OrganisationUnit[] =
         await this._dhis2OrganisationUnitUtil.discoveringValidationRuleOrganisationUnits();
       for (const organisationUnit of organisationUnits) {
@@ -46,7 +48,9 @@ export class ValidationRuleProcess {
         );
         const validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[] =
           await this._dhis2ValidationRuleUtil.triggerAndGetValidationRuleNotification(
-            organisationUnit.id ?? ''
+            organisationUnit.id ?? '',
+            startDate,
+            endDate
           );
         console.log(validationRuleTriggers);
       }
