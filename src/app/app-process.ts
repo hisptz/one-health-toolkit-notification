@@ -16,7 +16,7 @@ export class AppProcess {
       await new LogsUtil().addLogs(
         'error',
         error.message || error,
-        'AppProcess'
+        'App Process'
       );
     }
   }

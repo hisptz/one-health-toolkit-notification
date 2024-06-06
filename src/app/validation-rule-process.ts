@@ -1,5 +1,8 @@
 import { appSourceConfig } from '../configs';
-import { Dhis2OrganisationUnit } from '../models';
+import {
+  Dhis2OrganisationUnit,
+  Dhis2ValidationRuleTriggerResponse
+} from '../models';
 import {
   Dhis2OrganisationUnitUtil,
   Dhis2ValidationRuleUtil,
@@ -28,7 +31,7 @@ export class ValidationRuleProcess {
       await new LogsUtil().addLogs(
         'info',
         `Start of evaluation and trigger for validation rule process`,
-        'App process'
+        'Validation Rule Process'
       );
       //TODO run predictors
       const organisationUnits: Dhis2OrganisationUnit[] =
@@ -41,13 +44,17 @@ export class ValidationRuleProcess {
           }`,
           'App process'
         );
+        const validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[] =
+          await this._dhis2ValidationRuleUtil.triggerAndGetValidationRuleNotification(
+            organisationUnit.id ?? ''
+          );
+        console.log(validationRuleTriggers);
       }
-      //for each ou trigger and count notifications
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
         error.message || error,
-        'AppProcess'
+        'Validation Rule Process'
       );
     }
   }
