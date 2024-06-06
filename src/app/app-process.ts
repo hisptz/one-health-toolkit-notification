@@ -30,9 +30,9 @@ export class AppProcess {
     const endDate = AppUtil.getFormattedDate(new Date());
     const startDate = AppUtil.getFormattedDate(
       new Date(
-        new Date().setMonth(
-          new Date().getMonth() -
-            DHIS2_VALIDATION_RULE_CONSTANT.defaultNumberOfMonth
+        new Date().setDate(
+          new Date().getDate() -
+            DHIS2_VALIDATION_RULE_CONSTANT.defaultNumberOfDays
         )
       )
     );

@@ -1,4 +1,4 @@
-import { AppUtil, LogsUtil } from '.';
+import { AppUtil, HttpUtil, LogsUtil } from '.';
 import { DHIS2_PREDICTOR_CONSTANT } from '../configs';
 
 export class Dhis2PredictorUtil {
@@ -18,8 +18,19 @@ export class Dhis2PredictorUtil {
         'Validation Rule Process'
       );
       for (const predictorGroup of DHIS2_PREDICTOR_CONSTANT.predictorGroups) {
-        console.log(predictorGroup);
-        // predictorGroups/${predictorGroup.id}/run?startDate=${startDate}&endDate=${endDate}
+        const response: any = await HttpUtil.postHttp(
+          this._headers,
+          `${this._url}/api/predictorGroups/${predictorGroup}/run?startDate=${startDate}&endDate=${endDate}`,
+          {}
+        );
+        const httpStatusCode = response.httpStatusCode ?? 0;
+        if (httpStatusCode !== 200) {
+          await new LogsUtil().addLogs(
+            'error',
+            `Error while running predictor group ${predictorGroup} with status code ${httpStatusCode}`,
+            'Dhis2PredictorUtil'
+          );
+        }
       }
     } catch (error: any) {
       await new LogsUtil().addLogs(

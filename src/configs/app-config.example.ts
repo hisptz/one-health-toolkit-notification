@@ -16,5 +16,5 @@ export const DHIS2_PREDICTOR_CONSTANT = {
 
 export const DHIS2_VALIDATION_RULE_CONSTANT = {
   validationRuleGroups: [], // ids for validation rule group for the notifications
-  defaultNumberOfMonth: 2 // number of month including current month get end date
+  defaultNumberOfDays: 2 // number of month including current month get end date
 };
