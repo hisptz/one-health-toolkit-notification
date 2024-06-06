@@ -4,3 +4,6 @@ export * from './file-util';
 export * from './http-util';
 export * from './logs-util';
 export * from './dhis2-data-value-util';
+export * from './dhis2-validation-rule-util';
+export * from './dhis2-organisation-unit-util';
+export * from './dhis2-predictor-util';
