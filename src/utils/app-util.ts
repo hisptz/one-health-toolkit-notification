@@ -37,6 +37,30 @@ export class AppUtil {
     };
   }
 
+  static getISOWeekFromDate(date: Date): string {
+    const dateObject = new Date(date.getTime());
+    const year = date.getFullYear();
+    dateObject.setHours(0, 0, 0, 0);
+    // Thursday in current week decides the year.
+    dateObject.setDate(
+      dateObject.getDate() + 3 - ((dateObject.getDay() + 6) % 7)
+    );
+    // January 4 is always in week 1.
+    var week1 = new Date(dateObject.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    const isoWeekNumber =
+      1 +
+      Math.round(
+        ((date.getTime() - week1.getTime()) / 86400000 -
+          3 +
+          ((week1.getDay() + 6) % 7)) /
+          7
+      );
+    return isoWeekNumber > 9
+      ? `${year}W${isoWeekNumber}`
+      : `${year}W0${isoWeekNumber}`;
+  }
+
   static getPaginationsFilters(response: any, pageSize: number = 25): string[] {
     const pagefilters: string[] = [];
     const pager = response.pager || {};
