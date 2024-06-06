@@ -11,6 +11,6 @@ export const DHIS2_ORGANISATION_UNIT_CONSTANT = {
 };
 
 export const DHIS2_VALIDATION_RULE_CONSTANT = {
-  validationRuleGroup: '', // id for validation rul group for the notifications
+  validationRuleGroups: [], // ids for validation rule group for the notifications
   defaultNumberOfMonth: 2 // number of month including current month get end date
 };
