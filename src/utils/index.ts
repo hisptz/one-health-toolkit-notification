@@ -7,3 +7,4 @@ export * from './dhis2-data-value-util';
 export * from './dhis2-validation-rule-util';
 export * from './dhis2-organisation-unit-util';
 export * from './dhis2-predictor-util';
+export * from './dhis2-message-conversations-util';

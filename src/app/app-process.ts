@@ -1,12 +1,14 @@
-import { ValidationRuleProcess } from '.';
+import { MessageConversationsProcess, ValidationRuleProcess } from '.';
 import { DHIS2_VALIDATION_RULE_CONSTANT } from '../configs';
 import { AppUtil, LogsUtil } from '../utils';
 
 export class AppProcess {
   private _validationRuleProcess: ValidationRuleProcess;
+  private _messageConversationsProcess: MessageConversationsProcess;
 
   constructor() {
     this._validationRuleProcess = new ValidationRuleProcess();
+    this._messageConversationsProcess = new MessageConversationsProcess();
   }
 
   async startProcess() {
@@ -16,7 +18,10 @@ export class AppProcess {
         startDate,
         endDate
       );
-      //TODO handling for notification counts from email sent
+      await this._messageConversationsProcess.startMessageonversationAnalysisProcess(
+        startDate,
+        endDate
+      );
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
