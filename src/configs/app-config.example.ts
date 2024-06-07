@@ -18,3 +18,11 @@ export const DHIS2_VALIDATION_RULE_CONSTANT = {
   validationRuleGroups: [], // ids for validation rule group for the notifications
   defaultNumberOfDays: 2 // number of month including current month get end date
 };
+
+export const DHIS2_NOTIFICATION_MAPPING_CONSTANT = [
+  {
+    dataElement: '', // ID for data element
+    notificationSubjectPattern: '', // notification's subject pattern from subject
+    diseasePattern: '' // disease pattern from subject
+  }
+];
