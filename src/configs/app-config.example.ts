@@ -1,4 +1,4 @@
-import { AppConfigModel } from '../models';
+import { AppConfigModel, Dhis2NotificationMapping } from '../models';
 
 export const appSourceConfig: AppConfigModel = {
   username: 'dhis_username',
@@ -19,7 +19,7 @@ export const DHIS2_VALIDATION_RULE_CONSTANT = {
   defaultNumberOfDays: 2 // number of month including current month get end date
 };
 
-export const DHIS2_NOTIFICATION_MAPPING_CONSTANT = [
+export const DHIS2_NOTIFICATION_MAPPING_CONSTANT: Dhis2NotificationMapping[] = [
   {
     dataElement: '', // ID for data element
     notificationSubjectPattern: '', // notification's subject pattern from subject
