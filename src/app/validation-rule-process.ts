@@ -6,12 +6,14 @@ import {
 import {
   Dhis2OrganisationUnitUtil,
   Dhis2ValidationRuleUtil,
+  Dhis2PredictorUtil,
   LogsUtil
 } from '../utils';
 
 export class ValidationRuleProcess {
   private _dhis2OrganisationUnitUtil: Dhis2OrganisationUnitUtil;
   private _dhis2ValidationRuleUtil: Dhis2ValidationRuleUtil;
+  private _dhis2PredictorUtil: Dhis2PredictorUtil;
 
   constructor() {
     this._dhis2ValidationRuleUtil = new Dhis2ValidationRuleUtil(
@@ -24,16 +26,24 @@ export class ValidationRuleProcess {
       appSourceConfig.password,
       appSourceConfig.baseUrl
     );
+    this._dhis2PredictorUtil = new Dhis2PredictorUtil(
+      appSourceConfig.username,
+      appSourceConfig.password,
+      appSourceConfig.baseUrl
+    );
   }
 
-  async startValidationRuleNotificationTriggerProcess() {
+  async startValidationRuleNotificationTriggerProcess(
+    startDate: string,
+    endDate: string
+  ) {
     try {
+      await this._dhis2PredictorUtil.runPredictorsByGroup(startDate, endDate);
       await new LogsUtil().addLogs(
         'info',
-        `Start of evaluation and trigger for validation rule process`,
+        `Start of evaluation and trigger for validation rule process from ${startDate} to ${endDate}`,
         'Validation Rule Process'
       );
-      //TODO run predictors
       const organisationUnits: Dhis2OrganisationUnit[] =
         await this._dhis2OrganisationUnitUtil.discoveringValidationRuleOrganisationUnits();
       for (const organisationUnit of organisationUnits) {
@@ -46,9 +56,12 @@ export class ValidationRuleProcess {
         );
         const validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[] =
           await this._dhis2ValidationRuleUtil.triggerAndGetValidationRuleNotification(
-            organisationUnit.id ?? ''
+            organisationUnit.id ?? '',
+            startDate,
+            endDate
           );
         console.log(validationRuleTriggers);
+        // get data values for submissions
       }
     } catch (error: any) {
       await new LogsUtil().addLogs(

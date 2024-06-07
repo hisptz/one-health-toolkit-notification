@@ -13,25 +13,33 @@ export class Dhis2ValidationRuleUtil {
   }
 
   async triggerAndGetValidationRuleNotification(
-    orgUnit: string
+    orgUnit: string,
+    startDate: string,
+    endDate: string
   ): Promise<Dhis2ValidationRuleTriggerResponse[]> {
     let validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[] = [];
     try {
-      const payload: any = this._getValidationRuleNotificationPayload(orgUnit);
-      const response: any = await HttpUtil.postHttp(
-        this._headers,
-        `${this._url}/api/dataAnalysis/validationRules`,
-        payload
+      const payloads: any = this._getValidationRuleNotificationPayload(
+        orgUnit,
+        startDate,
+        endDate
       );
-      validationRuleTriggers = map(response || [], (data) => {
-        const { periodId, validationRuleDescription, organisationUnitId } =
-          data;
-        return {
-          periodId,
-          validationRuleDescription,
-          organisationUnitId
-        };
-      });
+      for (const payload of payloads) {
+        const response: any = await HttpUtil.postHttp(
+          this._headers,
+          `${this._url}/api/dataAnalysis/validationRules`,
+          payload
+        );
+        validationRuleTriggers = map(response || [], (data) => {
+          const { periodId, validationRuleDescription, organisationUnitId } =
+            data;
+          return {
+            periodId,
+            validationRuleDescription,
+            organisationUnitId
+          };
+        });
+      }
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
@@ -42,29 +50,29 @@ export class Dhis2ValidationRuleUtil {
     return flattenDeep(validationRuleTriggers);
   }
 
-  private _getValidationRuleNotificationPayload(orgUnit: string) {
-    const endDate = AppUtil.getFormattedDate(new Date());
-    const startDate = AppUtil.getFormattedDate(
-      new Date(
-        new Date().setMonth(
-          new Date().getMonth() -
-            DHIS2_VALIDATION_RULE_CONSTANT.defaultNumberOfMonth
-        )
-      )
-    );
-    let payload: any = {
+  private _getValidationRuleNotificationPayload(
+    orgUnit: string,
+    startDate: string,
+    endDate: string
+  ): any[] {
+    const payloads: any[] = [];
+    let defaultPayload: any = {
       startDate,
       endDate,
       ou: orgUnit,
       notification: false,
       persist: false
     };
-    if (DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroup !== '') {
-      payload = {
-        ...payload,
-        vrg: DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroup
-      };
+    if (DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroups.length > 0) {
+      for (const vrg of DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroups) {
+        payloads.push({
+          ...defaultPayload,
+          vrg
+        });
+      }
+    } else {
+      payloads.push(defaultPayload);
     }
-    return payload;
+    return flattenDeep(payloads);
   }
 }
