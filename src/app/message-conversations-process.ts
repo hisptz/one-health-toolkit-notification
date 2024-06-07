@@ -1,5 +1,5 @@
 import { appSourceConfig } from '../configs';
-import { Dhis2MessageConversation } from '../models';
+import { Dhis2DataValue, Dhis2MessageConversation } from '../models';
 import { AppUtil, Dhis2MessageConversationsUtil, LogsUtil } from '../utils';
 
 export class MessageConversationsProcess {
@@ -37,10 +37,12 @@ export class MessageConversationsProcess {
           startDate,
           endDate
         );
-      console.log({
-        isoWeek,
-        messageConversations: messageConversations.length
-      });
+      const dhis2DataValues: Dhis2DataValue[] =
+        await this._dhis2MessageConversationsUtil.getTransformedMessageConversationsToDataValues(
+          messageConversations,
+          isoWeek
+        );
+      console.log(dhis2DataValues);
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',

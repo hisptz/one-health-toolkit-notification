@@ -1,6 +1,11 @@
-import { flattenDeep } from 'lodash';
+import { flattenDeep, split, join, filter } from 'lodash';
 import { AppUtil, HttpUtil, LogsUtil } from '.';
-import { Dhis2MessageConversation } from '../models';
+import {
+  Dhis2DataValue,
+  Dhis2MessageConversation,
+  Dhis2NotificationMapping
+} from '../models';
+import { DHIS2_NOTIFICATION_MAPPING_CONSTANT } from '../configs';
 
 export class Dhis2MessageConversationsUtil {
   private _url: string;
@@ -38,5 +43,27 @@ export class Dhis2MessageConversationsUtil {
       );
     }
     return flattenDeep(messageConversations);
+  }
+
+  async getTransformedMessageConversationsToDataValues(
+    messageConversations: Dhis2MessageConversation[],
+    isoWeek: string
+  ): Promise<Dhis2DataValue[]> {
+    const dhis2DataValues: Dhis2DataValue[] = [];
+    const notificationMappings: Dhis2NotificationMapping[] = filter(
+      DHIS2_NOTIFICATION_MAPPING_CONSTANT,
+      (config: Dhis2NotificationMapping) =>
+        config.notificationSubjectPattern !== ''
+    );
+    console.log(notificationMappings);
+    for (const messageConversation of messageConversations) {
+      const { messages, subject } = messageConversation;
+      console.log(subject);
+      for (const message of messages) {
+        const formttedText = join(split(message.text ?? '', '\n'), ' ');
+        console.log(formttedText);
+      }
+    }
+    return flattenDeep(dhis2DataValues);
   }
 }
