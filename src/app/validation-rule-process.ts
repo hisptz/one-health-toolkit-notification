@@ -8,15 +8,22 @@ import {
   Dhis2OrganisationUnitUtil,
   Dhis2ValidationRuleUtil,
   Dhis2PredictorUtil,
-  LogsUtil
+  LogsUtil,
+  Dhis2DataValueUtil
 } from '../utils';
 
 export class ValidationRuleProcess {
   private _dhis2OrganisationUnitUtil: Dhis2OrganisationUnitUtil;
   private _dhis2ValidationRuleUtil: Dhis2ValidationRuleUtil;
   private _dhis2PredictorUtil: Dhis2PredictorUtil;
+  private _dhis2DataValueUtil: Dhis2DataValueUtil;
 
   constructor() {
+    this._dhis2DataValueUtil = new Dhis2DataValueUtil(
+      appSourceConfig.username,
+      appSourceConfig.password,
+      appSourceConfig.baseUrl
+    );
     this._dhis2ValidationRuleUtil = new Dhis2ValidationRuleUtil(
       appSourceConfig.username,
       appSourceConfig.password,
@@ -65,7 +72,13 @@ export class ValidationRuleProcess {
           await this._dhis2ValidationRuleUtil.getTransformedMessageConversationsToDataValues(
             validationRuleTriggers
           );
-        console.log({ dhis2DataValues });
+        const aggregatedDataValues: Dhis2DataValue[] =
+          await this._dhis2DataValueUtil.getAggregatedDatavalues(
+            dhis2DataValues
+          );
+        console.log({
+          aggregatedDataValues
+        });
       }
     } catch (error: any) {
       await new LogsUtil().addLogs(
