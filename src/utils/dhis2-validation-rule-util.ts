@@ -1,7 +1,14 @@
-import { flattenDeep, map } from 'lodash';
+import { filter, flattenDeep, map, toLower } from 'lodash';
 import { AppUtil, HttpUtil, LogsUtil } from '.';
-import { DHIS2_VALIDATION_RULE_CONSTANT } from '../configs';
-import { Dhis2ValidationRuleTriggerResponse } from '../models';
+import {
+  DHIS2_NOTIFICATION_MAPPING_CONSTANT,
+  DHIS2_VALIDATION_RULE_CONSTANT
+} from '../configs';
+import {
+  Dhis2DataValue,
+  Dhis2NotificationMapping,
+  Dhis2ValidationRuleTriggerResponse
+} from '../models';
 
 export class Dhis2ValidationRuleUtil {
   private _url: string;
@@ -10,6 +17,50 @@ export class Dhis2ValidationRuleUtil {
   constructor(username: string, password: string, baseUrl: string) {
     this._url = baseUrl;
     this._headers = AppUtil.getHttpAuthorizationHeader(username, password);
+  }
+
+  async getTransformedMessageConversationsToDataValues(
+    validationRuleTriggers: Dhis2ValidationRuleTriggerResponse[]
+  ): Promise<Dhis2DataValue[]> {
+    const dhis2DataValues: Dhis2DataValue[] = [];
+    try {
+      const notificationMappings: Dhis2NotificationMapping[] = filter(
+        DHIS2_NOTIFICATION_MAPPING_CONSTANT,
+        (config: Dhis2NotificationMapping) =>
+          config.notificationSubjectPattern === ''
+      );
+      for (const validationRuleTrigger of validationRuleTriggers) {
+        const { periodId, organisationUnitId, validationRuleDescription } =
+          validationRuleTrigger;
+        for (const notificationMapping of notificationMappings) {
+          const { dataElement, diseasePattern } = notificationMapping;
+          console.log({
+            diseasePattern,
+            validationRuleDescription,
+            test: toLower(validationRuleDescription).includes(
+              toLower(diseasePattern)
+            )
+          });
+          if (
+            toLower(validationRuleDescription).includes(toLower(diseasePattern))
+          ) {
+            dhis2DataValues.push({
+              dataElement,
+              period: periodId,
+              orgUnit: organisationUnitId,
+              value: 1
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      await new LogsUtil().addLogs(
+        'error',
+        error.message || error,
+        'Dhis2MessageConversationsUtil'
+      );
+    }
+    return flattenDeep(dhis2DataValues);
   }
 
   async triggerAndGetValidationRuleNotification(
@@ -60,7 +111,7 @@ export class Dhis2ValidationRuleUtil {
       startDate,
       endDate,
       ou: orgUnit,
-      notification: true,
+      notification: false,
       persist: false
     };
     if (DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroups.length > 0) {
