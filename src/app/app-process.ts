@@ -32,7 +32,11 @@ export class AppProcess {
   }
 
   _getStartAndEndDateForNotifications() {
-    const endDate = AppUtil.getFormattedDate(new Date());
+    const parameters = process.argv;
+    const endDateIndex = 2;
+    const endDate = parameters[endDateIndex]
+      ? AppUtil.getFormattedDate(new Date(parameters[endDateIndex]))
+      : AppUtil.getFormattedDate(new Date());
     const startDate = AppUtil.getFormattedDate(
       new Date(
         new Date(endDate).setDate(
