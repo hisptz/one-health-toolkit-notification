@@ -3,4 +3,5 @@ export interface Dhis2MessageConversation {
   messages: Array<{
     text: string;
   }>;
+  lastMessage: string;
 }

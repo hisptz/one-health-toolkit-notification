@@ -39,7 +39,7 @@ export class Dhis2MessageConversationsUtil {
         `Discovering message conversations from ${startDate} to ${endDate}`,
         'Dhis2MessageConversationsUtil'
       );
-      const filter = `filter=messageType:eq:SYSTEM&filter=lastMessage:gt:${startDate}`;
+      const filter = `filter=messageType:eq:SYSTEM&filter=lastMessage:gt:${startDate}&filter=lastMessage:le:${endDate}`;
       const fields = `fields=subject,displayName,lastMessage,messages[text]`;
       const response: any = await HttpUtil.getHttp(
         this._headers,
