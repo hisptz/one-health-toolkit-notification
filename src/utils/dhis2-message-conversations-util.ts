@@ -79,16 +79,16 @@ export class Dhis2MessageConversationsUtil {
               toLower(subject).includes(toLower(notificationSubjectPattern)) &&
               toLower(formttedText).includes(toLower(diseasePattern))
             ) {
-              const caseId =
+              const caseId: any =
                 this._getCaseIdFromNotificationMessage(formttedText);
-              // TODO grouping by ou to aggregate the values or get total count
-              console.log({
-                isoWeek,
-                dataElement,
-                diseasePattern,
-                subject,
-                formttedText,
+              const orgUnit = await this.getCaseOrganisationUnitByCaseId(
                 caseId
+              );
+              dhis2DataValues.push({
+                dataElement,
+                period: isoWeek,
+                orgUnit,
+                value: 1
               });
             }
           }
@@ -102,6 +102,26 @@ export class Dhis2MessageConversationsUtil {
       );
     }
     return flattenDeep(dhis2DataValues);
+  }
+
+  async getCaseOrganisationUnitByCaseId(caseId: string): Promise<string> {
+    let orgUnit = '';
+    try {
+      const filter = `ouMode=ACCESSIBLE&program=${DHIS2_MESSAGE_CONVERSATION_CONSTANT.program}&attribute=${DHIS2_MESSAGE_CONVERSATION_CONSTANT.filterAttribute}:EQ:${caseId}&paging=false`;
+      const fields = `fields=orgUnit`;
+      const response: any = await HttpUtil.getHttp(
+        this._headers,
+        `${this._url}/api/tracker/trackedEntities?${filter}&${fields}`
+      );
+      orgUnit = response.instances[0]?.orgUnit ?? orgUnit;
+    } catch (error: any) {
+      await new LogsUtil().addLogs(
+        'error',
+        error.message || error,
+        'Dhis2MessageConversationsUtil'
+      );
+    }
+    return orgUnit;
   }
 
   private _getCaseIdFromNotificationMessage(formttedText: string) {

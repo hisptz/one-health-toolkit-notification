@@ -34,13 +34,6 @@ export class Dhis2ValidationRuleUtil {
           validationRuleTrigger;
         for (const notificationMapping of notificationMappings) {
           const { dataElement, diseasePattern } = notificationMapping;
-          console.log({
-            diseasePattern,
-            validationRuleDescription,
-            test: toLower(validationRuleDescription).includes(
-              toLower(diseasePattern)
-            )
-          });
           if (
             toLower(validationRuleDescription).includes(toLower(diseasePattern))
           ) {
