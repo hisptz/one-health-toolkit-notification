@@ -1,11 +1,23 @@
-import { flattenDeep, split, join, filter } from 'lodash';
+import {
+  flattenDeep,
+  split,
+  join,
+  filter,
+  toLower,
+  last,
+  trim,
+  first
+} from 'lodash';
 import { AppUtil, HttpUtil, LogsUtil } from '.';
 import {
   Dhis2DataValue,
   Dhis2MessageConversation,
   Dhis2NotificationMapping
 } from '../models';
-import { DHIS2_NOTIFICATION_MAPPING_CONSTANT } from '../configs';
+import {
+  DHIS2_NOTIFICATION_MAPPING_CONSTANT,
+  DHIS2_MESSAGE_CONVERSATION_CONSTANT
+} from '../configs';
 
 export class Dhis2MessageConversationsUtil {
   private _url: string;
@@ -50,20 +62,65 @@ export class Dhis2MessageConversationsUtil {
     isoWeek: string
   ): Promise<Dhis2DataValue[]> {
     const dhis2DataValues: Dhis2DataValue[] = [];
-    const notificationMappings: Dhis2NotificationMapping[] = filter(
-      DHIS2_NOTIFICATION_MAPPING_CONSTANT,
-      (config: Dhis2NotificationMapping) =>
-        config.notificationSubjectPattern !== ''
-    );
-    console.log(notificationMappings);
-    for (const messageConversation of messageConversations) {
-      const { messages, subject } = messageConversation;
-      console.log(subject);
-      for (const message of messages) {
-        const formttedText = join(split(message.text ?? '', '\n'), ' ');
-        console.log(formttedText);
+    try {
+      const notificationMappings: Dhis2NotificationMapping[] = filter(
+        DHIS2_NOTIFICATION_MAPPING_CONSTANT,
+        (config: Dhis2NotificationMapping) =>
+          config.notificationSubjectPattern !== ''
+      );
+      for (const messageConversation of messageConversations) {
+        const { messages, subject } = messageConversation;
+        for (const message of messages) {
+          const formttedText = join(split(message.text ?? '', '\n'), ' ');
+          for (const notificationMapping of notificationMappings) {
+            const { dataElement, diseasePattern, notificationSubjectPattern } =
+              notificationMapping;
+            if (
+              toLower(subject).includes(toLower(notificationSubjectPattern)) &&
+              toLower(formttedText).includes(toLower(diseasePattern))
+            ) {
+              const caseId =
+                this._getCaseIdFromNotificationMessage(formttedText);
+              // TODO grouping by ou to aggregate the values or get total count
+              console.log({
+                isoWeek,
+                dataElement,
+                diseasePattern,
+                subject,
+                formttedText,
+                caseId
+              });
+            }
+          }
+        }
       }
+    } catch (error: any) {
+      await new LogsUtil().addLogs(
+        'error',
+        error.message || error,
+        'Dhis2MessageConversationsUtil'
+      );
     }
     return flattenDeep(dhis2DataValues);
+  }
+
+  private _getCaseIdFromNotificationMessage(formttedText: string) {
+    return formttedText.includes(
+      DHIS2_MESSAGE_CONVERSATION_CONSTANT.caseIdReference
+    )
+      ? first(
+          split(
+            trim(
+              last(
+                split(
+                  formttedText,
+                  DHIS2_MESSAGE_CONVERSATION_CONSTANT.caseIdReference
+                )
+              )
+            ),
+            ' '
+          )
+        )
+      : '';
   }
 }

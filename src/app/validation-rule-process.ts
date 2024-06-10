@@ -1,5 +1,6 @@
 import { appSourceConfig } from '../configs';
 import {
+  Dhis2DataValue,
   Dhis2OrganisationUnit,
   Dhis2ValidationRuleTriggerResponse
 } from '../models';
