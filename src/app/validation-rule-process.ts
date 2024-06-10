@@ -60,8 +60,11 @@ export class ValidationRuleProcess {
             startDate,
             endDate
           );
-        console.log(validationRuleTriggers);
-        // get data values for submissions
+        const dhis2DataValues: Dhis2DataValue[] =
+          await this._dhis2ValidationRuleUtil.getTransformedMessageConversationsToDataValues(
+            validationRuleTriggers
+          );
+        console.log({ dhis2DataValues });
       }
     } catch (error: any) {
       await new LogsUtil().addLogs(
