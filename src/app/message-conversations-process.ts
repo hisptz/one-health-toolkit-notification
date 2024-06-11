@@ -55,9 +55,9 @@ export class MessageConversationsProcess {
         );
       const aggregatedDataValues: Dhis2DataValue[] =
         await this._dhis2DataValueUtil.getAggregatedDatavalues(dhis2DataValues);
-      console.log({
-        aggregatedDataValues
-      });
+      if (aggregatedDataValues.length > 0) {
+        await this._dhis2DataValueUtil.syncDataValues(aggregatedDataValues);
+      }
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',

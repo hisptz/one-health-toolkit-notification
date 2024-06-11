@@ -104,7 +104,7 @@ export class Dhis2ValidationRuleUtil {
       startDate,
       endDate,
       ou: orgUnit,
-      notification: false,
+      notification: true,
       persist: false
     };
     if (DHIS2_VALIDATION_RULE_CONSTANT.validationRuleGroups.length > 0) {
