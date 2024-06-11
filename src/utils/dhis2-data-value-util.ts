@@ -80,7 +80,18 @@ export class Dhis2DataValueUtil {
           if (conflictMessage !== '') {
             conflicts.push(conflictMessage);
           }
-          console.log({ imported, deleted, ignored, conflictMessage });
+          await new LogsUtil().addLogs(
+            'error',
+            `Imported: ${imported}, Deleted: ${deleted}, Ignored: ${ignored}`,
+            'Dhis2DataValueUtil'
+          );
+          if (conflictMessage) {
+            await new LogsUtil().addLogs(
+              'error',
+              conflictMessage,
+              'Dhis2DataValueUtil'
+            );
+          }
         } catch (error: any) {
           await new LogsUtil().addLogs(
             'error',
@@ -90,6 +101,8 @@ export class Dhis2DataValueUtil {
         }
       }
     }
+    console.log(conflicts);
+    console.log(uniq(conflicts));
     return {
       imported: totalImported,
       deleted: totalDeleted,
