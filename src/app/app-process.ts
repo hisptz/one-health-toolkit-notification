@@ -1,12 +1,14 @@
-import { ValidationRuleProcess } from '.';
+import { MessageConversationsProcess, ValidationRuleProcess } from '.';
 import { DHIS2_VALIDATION_RULE_CONSTANT } from '../configs';
 import { AppUtil, LogsUtil } from '../utils';
 
 export class AppProcess {
   private _validationRuleProcess: ValidationRuleProcess;
+  private _messageConversationsProcess: MessageConversationsProcess;
 
   constructor() {
     this._validationRuleProcess = new ValidationRuleProcess();
+    this._messageConversationsProcess = new MessageConversationsProcess();
   }
 
   async startProcess() {
@@ -16,7 +18,10 @@ export class AppProcess {
         startDate,
         endDate
       );
-      //TODO handling for notification counts from email sent
+      await this._messageConversationsProcess.startMessageonversationAnalysisProcess(
+        startDate,
+        endDate
+      );
     } catch (error: any) {
       await new LogsUtil().addLogs(
         'error',
@@ -27,11 +32,15 @@ export class AppProcess {
   }
 
   _getStartAndEndDateForNotifications() {
-    const endDate = AppUtil.getFormattedDate(new Date());
+    const parameters = process.argv;
+    const endDateIndex = 2;
+    const endDate = parameters[endDateIndex]
+      ? AppUtil.getFormattedDate(new Date(parameters[endDateIndex]))
+      : AppUtil.getFormattedDate(new Date());
     const startDate = AppUtil.getFormattedDate(
       new Date(
-        new Date().setDate(
-          new Date().getDate() -
+        new Date(endDate).setDate(
+          new Date(endDate).getDate() -
             DHIS2_VALIDATION_RULE_CONSTANT.defaultNumberOfDays
         )
       )
