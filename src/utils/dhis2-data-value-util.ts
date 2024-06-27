@@ -101,8 +101,6 @@ export class Dhis2DataValueUtil {
         }
       }
     }
-    console.log(conflicts);
-    console.log(uniq(conflicts));
     return {
       imported: totalImported,
       deleted: totalDeleted,
