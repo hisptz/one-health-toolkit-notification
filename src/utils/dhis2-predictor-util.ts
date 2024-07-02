@@ -18,6 +18,11 @@ export class Dhis2PredictorUtil {
         'Validation Rule Process'
       );
       for (const predictorGroup of DHIS2_PREDICTOR_CONSTANT.predictorGroups) {
+        await new LogsUtil().addLogs(
+          'info',
+          `Process for run Predictors by Groups ${predictorGroup}`,
+          'Validation Rule Process'
+        );
         const response: any = await HttpUtil.postHttp(
           this._headers,
           `${this._url}/api/predictorGroups/${predictorGroup}/run?startDate=${startDate}&endDate=${endDate}`,
