@@ -81,7 +81,7 @@ export class Dhis2DataValueUtil {
             conflicts.push(conflictMessage);
           }
           await new LogsUtil().addLogs(
-            'error',
+            'info',
             `Imported: ${imported}, Deleted: ${deleted}, Ignored: ${ignored}`,
             'Dhis2DataValueUtil'
           );
