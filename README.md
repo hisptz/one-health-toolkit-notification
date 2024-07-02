@@ -119,14 +119,14 @@ npm install
 
 After setting up and installing dependencies, you can run the app for development or deployment.
 
-**For Development:**
+### For Development:
 To track changes while developing, run the following command:
 
 ```bash
 npm run dev
 ```
 
-**For Deployment:**
+### For Deployment:
 First, build the script into a performant version, then run it. To build the script, run:
 
 ```bash
@@ -135,7 +135,7 @@ sh build-script.sh
 
 This command generates `one-health-toolkit-notification.zip` in the `dist` folder, containing the compiled script. Extract the zipped file to use the script.
 
-**Run the Script:**
+### Run the Script:
 To manually run the script on a specific date (e.g., 2024-06-24) to count and trigger notifications for the last seven days, use the command:
 
 ```bash
@@ -144,7 +144,7 @@ sh run-notification-script.sh 2024-06-24
 
 **Note:** If no specific date is provided, the script uses the current date to deduce the last seven days.
 
-**View Script Logs:**
+### View Script Logs:
 To view script logs during or after execution, run the following command inside the extracted zip folder:
 
 ```bash
